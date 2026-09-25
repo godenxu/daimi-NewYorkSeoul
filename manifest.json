@@ -1,0 +1,21 @@
+{
+  "lang": "zh-CN",
+  "name": "袋米旅行手账 · 纽约首尔 11 天",
+  "short_name": "袋米手账",
+  "description": "袋米陪你把 76 站纽约首尔行程一屏一站走完，可打卡、可看地图，断网也能用。",
+  "start_url": "./",
+  "scope": "./",
+  "id": "daimi-trip-2026",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#FBF7F0",
+  "theme_color": "#FBF7F0",
+  "categories": ["travel", "lifestyle", "productivity"],
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-192-maskable.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
