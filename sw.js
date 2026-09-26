@@ -5,7 +5,7 @@
  *
  * 地图瓦片是外部地址，一律不拦，交给页面自己的降级逻辑（探测失败会画手绘路线图）。
  */
-var CACHE = 'daimi-trip-v2';
+var CACHE = 'daimi-trip-v3';
 var HOME = new URL('./', self.location).href;
 var CORE = [HOME, 'manifest.json', 'icon-192.png', 'icon-512.png'];
 
