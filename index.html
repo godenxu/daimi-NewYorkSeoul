@@ -2350,6 +2350,21 @@ function packCount() {
   });
   return { got: g, tot: t };
 }
+function packSub(st) {
+  return st.got === st.tot ? '全勾上了，可以拎包出门了。'
+    : '还有 ' + (st.tot - st.got) + ' 样没塞进去。红点标的是漏了就麻烦的那几样。';
+}
+/* 只更新页头那三处（数字 / 进度条 / 副标题）。
+   勾选是逐项点的，整页重绘会把手上的位置抖掉，所以走原地刷新 ——
+   但三处必须一起更，漏掉副标题就会出现「9 / 40」配「还有 40 样没塞进去」。 */
+function paintPackHead() {
+  var st = packCount(), bar = $('#view-pack .pk-bar i'),
+      span = $('#view-pack .sec-h span'), sub = $('#view-pack .sec-sub');
+  if (span) span.textContent = st.got + ' / ' + st.tot;
+  if (bar) bar.style.width = (st.tot ? st.got / st.tot * 100 : 0).toFixed(1) + '%';
+  if (sub) sub.textContent = packSub(st);
+  return st;
+}
 function packText() {
   var out = ['【袋米的行李箱】纽约 + 首尔 11 天 打包清单', ''];
   PACK.forEach(function (grp) {
@@ -2375,9 +2390,7 @@ function renderPack() {
   var pct = st.tot ? (st.got / st.tot * 100) : 0;
 
   var head = '<div class="sec"><div class="sec-h"><h2>袋米的行李箱</h2><span>' + st.got + ' / ' + st.tot + '</span></div>' +
-    '<div class="sec-sub">' + (st.got === st.tot
-      ? '全勾上了，可以拎包出门了。'
-      : '还有 ' + (st.tot - st.got) + ' 样没塞进去。红点标的是漏了就麻烦的那几样。') + '</div>' +
+    '<div class="sec-sub">' + packSub(st) + '</div>' +
     '<div class="pk-bar"><i style="width:' + pct.toFixed(1) + '%"></i></div></div>';
 
   var groups = PACK.map(function (g, gi) {
@@ -2417,9 +2430,7 @@ function renderPack() {
     p.querySelector('.cnt').textContent = n + '/' + g.items.length;
     p.classList.toggle('full', n === g.items.length);
     p.querySelector('.cnt').classList.toggle('ok', n === g.items.length);
-    var st2 = packCount(), pct2 = st2.tot ? st2.got / st2.tot * 100 : 0;
-    $('#view-pack .pk-bar i').style.width = pct2.toFixed(1) + '%';
-    $('#view-pack .sec-h span').textContent = st2.got + ' / ' + st2.tot;
+    paintPackHead();
     if (n === g.items.length) toast('「' + g.name + '」都齐了');
   };
   v.querySelectorAll('.pk-i').forEach(function (li) {
@@ -3165,10 +3176,14 @@ function drawMap(list, keepView) {
   mapLayer = L.layerGroup().addTo(mapObj);
   var pts = [];
 
-  /* 住宿先落，且压在图钉下面（zIndexOffset 负值）—— 它是参照物，不该挡住站点 */
+  /* 住宿牌压在图钉之上。
+     一开始是反过来（负 zIndexOffset 垫在图钉下），理由是"住宿是参照物不该挡站点"——
+     但「回酒店」这类站点和酒店是同一个坐标，会被扇形散开成 4 枚图钉叠在同一处，
+     结果住宿牌被盖得一个字都不剩，"常态显示"就名存实亡了。
+     同坐标的这几枚站点点不到也没关系，行程页里照样点得开。 */
   cityHotels().forEach(function (h) {
     L.marker([h.geo.lat, h.geo.lng], {
-      zIndexOffset: -200,
+      zIndexOffset: 500,
       icon: L.divIcon({ className: '', html: '<div class="mk-home"><span>🏨</span>住宿</div>', iconSize: [58, 26], iconAnchor: [29, 13] })
     }).addTo(mapLayer).bindPopup(
       '<div class="pop-n">' + h.days.map(function (x) { return 'D' + x; }).join(' / ') + ' 下榻</div>' +
