@@ -1273,11 +1273,91 @@ html.sel .hero-nav { background: rgba(15, 110, 86, .93); }
 .panel.full .panel-h .cnt.ok { color: var(--ok-deep); font-weight: 500; }
 .pk-acts { display: flex; gap: 8px; margin-top: 14px; }
 .pk-acts button {
-  flex: 1; height: 42px; border-radius: var(--r-md);
+  flex: 1; min-width: 0; height: 42px; border-radius: var(--r-md);
   border: 1px solid var(--line2); background: var(--card);
   font-size: 13px; color: var(--ink2);
 }
 .pk-acts button:active { background: var(--paper); }
+
+/* ---- 行李页 · 可编辑 ---- */
+.sec-h.has-btn { align-items: center; }
+.sec-h.has-btn .sec-btn { margin-left: auto; }
+.sec-btn {
+  flex: none; height: 30px; padding: 0 13px; border-radius: 999px;
+  border: 1px solid var(--line2); background: var(--card);
+  font-size: 12px; color: var(--ink2);
+}
+.sec-btn:active { background: var(--paper); }
+.sec-btn.on { background: var(--accent); border-color: transparent; color: #fff; }
+.pk-tip {
+  font-size: 12px; line-height: 1.65; color: var(--accent-deep);
+  background: var(--accent-soft); border-radius: var(--r-sm); padding: 9px 11px;
+}
+.pk-tip b { font-weight: 600; }
+.panel-h .pk-gh { flex: none; display: flex; gap: 6px; margin-left: 2px; }
+.pk-mini {
+  flex: none; width: 25px; height: 25px; border-radius: 8px; line-height: 1;
+  border: 1px solid var(--line2); background: var(--card); color: var(--ink2);
+  font-size: 12px; display: flex; align-items: center; justify-content: center;
+}
+.pk-mini:active { background: var(--accent-soft); border-color: transparent; color: var(--accent-deep); }
+.pk-i .ed {
+  flex: none; width: 24px; height: 24px; margin-top: 1px; border-radius: 50%;
+  background: var(--paper); color: var(--ink2); font-size: 11px;
+  display: flex; align-items: center; justify-content: center;
+}
+.pk-i.editing .tx { padding-right: 2px; }
+.pk-i.editing:active { background: var(--accent-soft); }
+.pk-i.editing:active .ed { background: var(--card); color: var(--accent-deep); }
+.pk-blank { padding: 9px 2px; font-size: 12.5px; color: var(--ink3); }
+
+/* ---- 行李页 · 编辑弹层 ---- */
+.pk-sheet { position: fixed; inset: 0; z-index: 86; display: none; }
+.pk-sheet.show { display: block; }
+.pk-shade { position: absolute; inset: 0; background: rgba(43,42,39,.42); animation: pkFade .2s ease; }
+.pk-box {
+  position: absolute; left: 0; right: 0; bottom: 0; max-height: 88%;
+  background: var(--paper); border-radius: 18px 18px 0 0;
+  padding: 13px 16px calc(env(safe-area-inset-bottom, 0px) + 16px);
+  display: flex; flex-direction: column; box-shadow: 0 -8px 28px rgba(43,42,39,.2);
+  animation: pkUp .26s cubic-bezier(.32,.72,0,1);
+}
+@keyframes pkFade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pkUp { from { transform: translateY(103%); } to { transform: translateY(0); } }
+.pk-box-h { flex: none; display: flex; align-items: center; gap: 10px; padding-bottom: 12px; }
+.pk-box-h b { flex: 1; min-width: 0; font-size: 16px; font-weight: 500; letter-spacing: -.2px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pk-box-x {
+  flex: none; width: 32px; height: 32px; border-radius: 50%;
+  border: 1px solid var(--line); background: var(--card); color: var(--ink3); font-size: 13px;
+}
+.pk-box-x:active { background: var(--paper); }
+.pk-box-b { flex: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.pk-box-f { flex: none; display: flex; gap: 8px; flex-wrap: wrap; padding-top: 13px; }
+.pk-f { margin-bottom: 13px; }
+.pk-f:last-child { margin-bottom: 0; }
+.pk-f label { display: block; font-size: 11px; color: var(--ink3); letter-spacing: .3px; margin-bottom: 6px; }
+.pk-f .ex-chips { margin-top: 7px; }
+.pk-ta { height: auto; min-height: 60px; padding: 11px 13px; line-height: 1.55; resize: none; }
+.pk-code {
+  width: 100%; height: 200px; padding: 11px 12px; resize: none;
+  font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 11.5px; line-height: 1.5;
+}
+.pk-filebtn { display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--accent-deep); }
+.pk-fbtn {
+  flex: 1 1 28%; min-width: 0; height: 44px; border-radius: var(--r-md);
+  border: 1px solid var(--line2); background: var(--card); font-size: 13px; color: var(--ink2);
+}
+.pk-fbtn:active { background: var(--paper); }
+.pk-fbtn.pk-del { color: var(--tag-ticket-fg); }
+.pk-fbtn.pk-ok { flex: 1 1 100%; background: var(--accent); border-color: transparent; color: #fff; font-size: 14px; }
+.pk-fbtn.pk-ok:active { background: var(--accent-deep); }
+.pk-dl-note { font-size: 11.5px; color: var(--ink3); line-height: 1.65; }
+body.pk-lock { overflow: hidden; }
+
+@media (min-width: 700px) {
+  .pk-box { left: 50%; right: auto; width: 620px; margin-left: -310px; bottom: 26px; border-radius: 18px; }
+}
 
 /* ================= 记账页 ================= */
 .ex-sum { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
@@ -1660,8 +1740,9 @@ function fmtKm(m) {
   return m < 950 ? Math.round(m / 10) * 10 + ' m' : (m / 1000).toFixed(m < 10000 ? 1 : 0) + ' km';
 }
 
-/* ============ 行李 · 打包清单（袋米出品） ============ */
-var PACK = [
+/* ============ 行李 · 内置打包清单（袋米出品，只读底稿） ============
+   用户可以随便改，改过的存在 PK_SKEY 里；这份底稿只在「恢复默认」时用。 */
+var PACK_DEF = [
   { id: 'doc', icon: '🛂', name: '证件与钱财', note: '全部塞随身包，绝不托运', items: [
     { n: '护照（有效期 ≥ 6 个月）+ 韩国 C-3 签证页', t: '必带' },
     { n: '身份证 / 驾照（备用）' },
@@ -1715,6 +1796,182 @@ var PACK = [
     { n: '紧急联络：中国外交部领保热线 +86-10-12308' }
   ] }
 ];
+
+/* ---------- 清单结构层：加载 / 保存 / 规范化 ----------
+   项的身份用稳定的 key（不是下标）—— 删掉中间一项时，后面所有项的勾选不能跟着位移。
+   内置项的 key 故意保持 `组id-序号`，这样以前存下的勾选能原样认回来。 */
+var PK_SKEY = 'daimi.pack.v1';
+var PK_MAX_G = 40, PK_MAX_I = 400;
+var PACK = [];        /* 当前生效的清单（用户改过就是用户那份） */
+var pkEdit = false;   /* 编辑模式（每次打开默认关，免得误触） */
+var pkSeq = 100;      /* 新 id / key 的自增号，起点抬高，避开内置的 doc-0 这类 */
+
+function pkClean(v, max) {
+  return String(v == null ? '' : v)
+    .replace(/[\u0000-\u001F\u007F\u200B-\u200D\uFEFF]/g, ' ')
+    .replace(/\s+/g, ' ').trim().slice(0, max);
+}
+function pkSeed() {
+  return PACK_DEF.map(function (g) {
+    return {
+      id: g.id, icon: g.icon, name: g.name, note: g.note,
+      items: g.items.map(function (it, i) {
+        return { k: g.id + '-' + i, n: it.n, t: it.t || '' };
+      })
+    };
+  });
+}
+function pkAllKeys(gs) {
+  var seen = {};
+  (gs || []).forEach(function (g) {
+    if (!g) return;
+    seen[g.id] = 1;
+    (g.items || []).forEach(function (it) { seen[it.k] = 1; });
+  });
+  return seen;
+}
+/* 把任意来路的数据（本地存储 / 导入的 JSON）洗成内部结构。
+   宽松：只给字符串的项也认，没 key 的补 key，重名分组自动让开。 */
+function pkNorm(gs) {
+  var out = [], used = {};
+  (Array.isArray(gs) ? gs : []).forEach(function (g, gi) {
+    if (!g) return;
+    if (typeof g === 'string') g = { name: g, items: [] };
+    if (out.length >= PK_MAX_G) return;
+    var id = pkClean(g.id, 24);
+    if (!id || used[id]) { do { id = 'g' + (++pkSeq); } while (used[id]); }
+    used[id] = 1;
+    var items = [];
+    (Array.isArray(g.items) ? g.items : []).forEach(function (it) {
+      if (items.length >= PK_MAX_I) return;
+      var n, t = '', k = '', ck = false;
+      if (typeof it === 'string') { n = it; }
+      else if (it && typeof it === 'object') {
+        n = it.n != null ? it.n : it.name; t = it.t || it.tag || '';
+        k = pkClean(it.k, 32); ck = !!(it.ck || it.done || it.on);
+      } else return;
+      n = pkClean(n, 200);
+      if (!n) return;
+      if (!k || used[k]) { do { k = id + '-' + (++pkSeq); } while (used[k]); }
+      used[k] = 1;
+      items.push({ k: k, n: n, t: pkClean(t, 6), ck: ck });
+    });
+    out.push({
+      id: id, icon: pkClean(g.icon, 4) || '📦',
+      name: pkClean(g.name, 24) || ('分组 ' + (out.length + 1)),
+      note: pkClean(g.note, 80), items: items
+    });
+  });
+  return out;
+}
+function packLoad() {
+  PACK = pkSeed();
+  try {
+    var o = JSON.parse(localStorage.getItem(PK_SKEY) || 'null');
+    if (o && Array.isArray(o.g)) {
+      if (+o.sq > pkSeq) pkSeq = +o.sq;
+      PACK = pkNorm(o.g);
+    }
+  } catch (e) {}
+}
+/* 勾选只认得活在清单里的 key，删项时顺手把它的勾一起清掉，别让垃圾堆在本地存储 */
+function pkPrune() {
+  var live = pkAllKeys(PACK);
+  Object.keys(state.pack).forEach(function (k) { if (!live[k]) delete state.pack[k]; });
+}
+function packSave() {
+  pkPrune();
+  try { localStorage.setItem(PK_SKEY, JSON.stringify({ v: 1, sq: pkSeq, g: PACK })); } catch (e) {}
+}
+function pkUsedKey(k) {
+  return PACK.some(function (g) {
+    return g.items.some(function (it) { return it.k === k; });
+  });
+}
+function pkNewKey(gid) {
+  var k; do { k = gid + '-' + (++pkSeq); } while (pkUsedKey(k));
+  return k;
+}
+function pkNewGid() {
+  var id, seen = pkAllKeys(PACK);
+  do { id = 'g' + (++pkSeq); } while (seen[id]);
+  return id;
+}
+function pkCountOf(gs) {
+  var t = 0, g = 0;
+  (gs || []).forEach(function (x) {
+    (x.items || []).forEach(function (it) { t++; if (state.pack[it.k]) g++; });
+  });
+  return { got: g, tot: t };
+}
+
+/* ---------- 导入 / 导出 JSON ---------- */
+function packExportObj() {
+  return {
+    app: '袋米旅行手账', kind: 'packing-list', v: 1,
+    exportedAt: new Date().toISOString(),
+    groups: PACK.map(function (g) {
+      return {
+        id: g.id, icon: g.icon, name: g.name, note: g.note,
+        items: g.items.map(function (it) {
+          return { k: it.k, n: it.n, t: it.t || '', ck: state.pack[it.k] ? 1 : 0 };
+        })
+      };
+    })
+  };
+}
+function packExportJSON() { return JSON.stringify(packExportObj(), null, 2); }
+function pkParse(text) {
+  var o = JSON.parse(text), gs = null;
+  if (Array.isArray(o)) gs = o;
+  else if (o && typeof o === 'object') {
+    ['groups', 'g', 'list', 'items', 'data'].some(function (k) {
+      if (Array.isArray(o[k])) { gs = o[k]; return true; }
+      return false;
+    });
+    if (!gs) {
+      var ks = Object.keys(o);
+      /* 也认手写的 { "证件": ["护照", "身份证"] } 这种 */
+      if (ks.length && ks.every(function (k) { return Array.isArray(o[k]); })) {
+        gs = ks.map(function (k) { return { name: k, items: o[k] }; });
+      }
+    }
+  }
+  if (!gs) throw new Error('看着不像一份清单');
+  return gs;
+}
+/* 已经归一化过的清单直接落地。返回统计，供测试和弹层复用。 */
+function pkApplyClean(clean) {
+  var tot = 0, ck = 0;
+  clean.forEach(function (g) { tot += g.items.length; });
+  if (!clean.length || !tot) return { ok: false, why: '里面没有可用的条目' };
+  PACK = clean;
+  state.pack = {};
+  clean.forEach(function (g) {
+    g.items.forEach(function (it) { if (it.ck) { state.pack[it.k] = 1; ck++; } });
+  });
+  packSave(); save();
+  return { ok: true, groups: clean.length, items: tot, ck: ck };
+}
+function pkFileName() {
+  var d = new Date();
+  return '袋米打包清单-' + d.getFullYear() +
+    ('0' + (d.getMonth() + 1)).slice(-2) + ('0' + d.getDate()).slice(-2) + '.json';
+}
+function pkDownload(name, text) {
+  try {
+    var b = new Blob([text], { type: 'application/json;charset=utf-8' });
+    var u = URL.createObjectURL(b);
+    var a = document.createElement('a');
+    a.href = u; a.download = name; a.style.display = 'none';
+    document.body.appendChild(a); a.click();
+    setTimeout(function () {
+      try { URL.revokeObjectURL(u); } catch (e) {}
+      if (a.parentNode) a.parentNode.removeChild(a);
+    }, 2000);
+    return true;
+  } catch (e) { return false; }
+}
 
 /* ============ 记账 ============ */
 var EXP_SKEY = 'daimi.exp.v1';
@@ -2346,11 +2603,12 @@ var CARET = '<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentC
 function packCount() {
   var t = 0, g = 0;
   PACK.forEach(function (grp) {
-    grp.items.forEach(function (it, i) { t++; if (state.pack[grp.id + '-' + i]) g++; });
+    grp.items.forEach(function (it) { t++; if (state.pack[it.k]) g++; });
   });
   return { got: g, tot: t };
 }
 function packSub(st) {
+  if (!st.tot) return '清单还是空的 —— 点右上角「编辑」加几组，或者用「导入 JSON」拉一份进来。';
   return st.got === st.tot ? '全勾上了，可以拎包出门了。'
     : '还有 ' + (st.tot - st.got) + ' 样没塞进去。红点标的是漏了就麻烦的那几样。';
 }
@@ -2368,9 +2626,10 @@ function paintPackHead() {
 function packText() {
   var out = ['【袋米的行李箱】纽约 + 首尔 11 天 打包清单', ''];
   PACK.forEach(function (grp) {
-    out.push(grp.icon + ' ' + grp.name + '（' + grp.note + '）');
-    grp.items.forEach(function (it, i) {
-      out.push('  ' + (state.pack[grp.id + '-' + i] ? '☑' : '☐') + ' ' + it.n + (it.t ? '  [' + it.t + ']' : ''));
+    out.push(grp.icon + ' ' + grp.name + (grp.note ? '（' + grp.note + '）' : ''));
+    if (!grp.items.length) out.push('  （空）');
+    grp.items.forEach(function (it) {
+      out.push('  ' + (state.pack[it.k] ? '☑' : '☐') + ' ' + it.n + (it.t ? '  [' + it.t + ']' : ''));
     });
     out.push('');
   });
@@ -2389,32 +2648,55 @@ function renderPack() {
   var st = packCount();
   var pct = st.tot ? (st.got / st.tot * 100) : 0;
 
-  var head = '<div class="sec"><div class="sec-h"><h2>袋米的行李箱</h2><span>' + st.got + ' / ' + st.tot + '</span></div>' +
+  var head = '<div class="sec"><div class="sec-h has-btn"><h2>袋米的行李箱</h2>' +
+    '<span>' + st.got + ' / ' + st.tot + '</span>' +
+    '<button class="sec-btn' + (pkEdit ? ' on' : '') + '" id="pkEditTog">' + (pkEdit ? '完成' : '编辑') + '</button></div>' +
     '<div class="sec-sub">' + packSub(st) + '</div>' +
     '<div class="pk-bar"><i style="width:' + pct.toFixed(1) + '%"></i></div></div>';
 
-  var groups = PACK.map(function (g, gi) {
-    var n = 0;
-    g.items.forEach(function (it, i) { if (state.pack[g.id + '-' + i]) n++; });
-    var items = g.items.map(function (it, i) {
-      var k = g.id + '-' + i, on = !!state.pack[k];
-      return '<li class="pk-i' + (on ? ' on' : '') + '" data-pk="' + k + '" role="button" tabindex="0">' +
-        '<span class="cbx">✓</span><span class="tx">' + esc(it.n) + '</span>' +
-        (it.t ? '<span class="must">' + esc(it.t) + '</span>' : '') + '</li>';
-    }).join('');
-    return '<div class="panel' + (n === g.items.length ? ' full' : '') + (gi === 0 ? ' open' : '') + '" data-p="pk' + gi + '">' +
-      '<div class="panel-h">' + CARET + '<h3>' + g.icon + ' ' + esc(g.name) + '</h3>' +
-      '<span class="cnt' + (n === g.items.length ? ' ok' : '') + '">' + n + '/' + g.items.length + '</span></div>' +
-      '<div class="panel-b"><div class="pk-note">' + esc(g.note) + '</div><ul class="pk">' + items + '</ul></div></div>';
-  }).join('');
+  var tip = pkEdit
+    ? '<div class="sec" style="padding-top:12px"><div class="pk-tip">编辑模式：点任意一项就能改文案 / 标记 / 换组，' +
+      '点分组名右边的 <b>＋</b> 加项、<b>✎</b> 改分组。改完点右上角「完成」。</div></div>'
+    : '';
 
-  v.innerHTML = head +
-    '<div class="sec" style="padding-top:0">' + groups +
-    '<div class="pk-acts">' +
-      '<button id="pkAll">全部勾上</button><button id="pkClear">清空</button><button id="pkCopy">复制清单</button>' +
-    '</div>' +
-    '<div class="bk-note">勾选存在这台手机上。「复制清单」会给你一份纯文字版，发给自己或同伴都行。</div>' +
-    '</div>';
+  var groups = PACK.length ? PACK.map(function (g, gi) {
+    var n = 0;
+    g.items.forEach(function (it) { if (state.pack[it.k]) n++; });
+    var all = g.items.length > 0 && n === g.items.length;
+    var items = g.items.length ? g.items.map(function (it, i) {
+      var on = !!state.pack[it.k];
+      return '<li class="pk-i' + (on ? ' on' : '') + (pkEdit ? ' editing' : '') +
+        '" data-pk="' + esc(it.k) + '" data-g="' + gi + '" data-i="' + i + '" role="button" tabindex="0">' +
+        '<span class="cbx">✓</span><span class="tx">' + esc(it.n) + '</span>' +
+        (it.t ? '<span class="must">' + esc(it.t) + '</span>' : '') +
+        (pkEdit ? '<span class="ed">✎</span>' : '') + '</li>';
+    }).join('') : '<li class="pk-blank">这一组还空着' + (pkEdit ? '，点分组名右边的 ＋ 加一项' : '') + '</li>';
+    var gh = pkEdit
+      ? '<span class="pk-gh">' +
+        '<button class="pk-mini js-additem" data-g="' + gi + '" aria-label="加一项">＋</button>' +
+        '<button class="pk-mini js-gedit" data-g="' + gi + '" aria-label="改分组">✎</button></span>'
+      : '';
+    return '<div class="panel' + (all ? ' full' : '') + (gi === 0 || pkEdit ? ' open' : '') + '" data-p="pk' + gi + '">' +
+      '<div class="panel-h">' + CARET + '<h3>' + esc(g.icon) + ' ' + esc(g.name) + '</h3>' +
+      '<span class="cnt' + (all ? ' ok' : '') + '">' + n + '/' + g.items.length + '</span>' + gh + '</div>' +
+      '<div class="panel-b">' + (g.note ? '<div class="pk-note">' + esc(g.note) + '</div>' : '') +
+      '<ul class="pk">' + items + '</ul></div></div>';
+  }).join('') : '<div class="ex-empty"><span>📦</span>清单是空的。点下面的「＋ 新增分组」从零排一份，' +
+    '或者「导入 JSON」把之前导出的那份拉回来。</div>';
+
+  var acts = pkEdit
+    ? '<div class="pk-acts"><button id="pkAddGroup">＋ 新增分组</button><button id="pkExport">导出 JSON</button></div>' +
+      '<div class="pk-acts"><button id="pkImport">导入 JSON</button><button id="pkRestore">恢复默认</button></div>'
+    : '<div class="pk-acts">' +
+      '<button id="pkAll">全部勾上</button><button id="pkClear">清空</button><button id="pkCopy">复制清单</button></div>';
+
+  var note = pkEdit
+    ? '清单存在这台手机上。「导出 JSON」留个底，也能发给同伴；换设备用「导入 JSON」搬回来。'
+    : '勾选存在这台手机上。「复制清单」会给你一份纯文字版，发给自己或同伴都行。';
+
+  v.innerHTML = head + tip +
+    '<div class="sec" style="padding-top:' + (pkEdit ? '0' : '12') + 'px">' + groups + acts +
+    '<div class="bk-note">' + note + '</div></div>';
 
   v.querySelectorAll('.panel-h').forEach(function (h) {
     h.addEventListener('click', function () { h.parentNode.classList.toggle('open'); });
@@ -2426,29 +2708,319 @@ function renderPack() {
     li.classList.toggle('on', !!state.pack[k]);
     var p = li.closest('.panel'), g = PACK[+p.dataset.p.slice(2)];
     var n = 0;
-    g.items.forEach(function (it, i) { if (state.pack[g.id + '-' + i]) n++; });
+    g.items.forEach(function (it) { if (state.pack[it.k]) n++; });
+    var all = g.items.length > 0 && n === g.items.length;
     p.querySelector('.cnt').textContent = n + '/' + g.items.length;
-    p.classList.toggle('full', n === g.items.length);
-    p.querySelector('.cnt').classList.toggle('ok', n === g.items.length);
+    p.classList.toggle('full', all);
+    p.querySelector('.cnt').classList.toggle('ok', all);
     paintPackHead();
-    if (n === g.items.length) toast('「' + g.name + '」都齐了');
+    if (all) toast('「' + g.name + '」都齐了');
   };
   v.querySelectorAll('.pk-i').forEach(function (li) {
-    li.addEventListener('click', function () { toggle(li); });
+    li.addEventListener('click', function (e) {
+      /* 编辑模式下：点勾选框还是勾选，点别处进编辑弹层 */
+      if (!pkEdit) return toggle(li);
+      if (e.target.closest('.cbx')) return toggle(li);
+      pkItemEdit(+li.dataset.g, +li.dataset.i);
+    });
     li.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(li); }
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      e.preventDefault();
+      if (pkEdit) pkItemEdit(+li.dataset.g, +li.dataset.i); else toggle(li);
     });
   });
-  $('#pkAll').addEventListener('click', function () {
-    PACK.forEach(function (g) { g.items.forEach(function (it, i) { state.pack[g.id + '-' + i] = 1; }); });
-    save(); renderPack(); toast('全勾上了，出发吧');
+
+  $('#pkEditTog').addEventListener('click', function () {
+    pkEdit = !pkEdit;
+    renderPack();
+    if (pkEdit) toast('可以改了：点任意一项改内容');
   });
-  $('#pkClear').addEventListener('click', function () {
-    if (!window.confirm('把打包清单的勾全部清掉？')) return;
-    state.pack = {}; save(); renderPack(); toast('清单清空了');
+  v.querySelectorAll('.js-additem').forEach(function (b) {
+    b.addEventListener('click', function (e) { e.stopPropagation(); pkItemEdit(+b.dataset.g, -1); });
   });
-  $('#pkCopy').addEventListener('click', function () {
-    copyText(packText(), '清单已复制，粘到备忘录就行');
+  v.querySelectorAll('.js-gedit').forEach(function (b) {
+    b.addEventListener('click', function (e) { e.stopPropagation(); pkGroupEdit(+b.dataset.g); });
+  });
+  if (pkEdit) {
+    $('#pkAddGroup').addEventListener('click', function () {
+      PACK.push({ id: pkNewGid(), icon: '📦', name: '新分组', note: '', items: [] });
+      packSave(); renderPack();
+      pkGroupEdit(PACK.length - 1);
+    });
+    $('#pkExport').addEventListener('click', pkExportSheet);
+    $('#pkImport').addEventListener('click', pkImportSheet);
+    $('#pkRestore').addEventListener('click', function () {
+      if (!window.confirm('丢掉你自己改的那份，换回袋米内置的打包清单？')) return;
+      PACK = pkSeed();
+      packSave(); renderPack();
+      toast('已经换回内置那份');
+    });
+  } else {
+    $('#pkAll').addEventListener('click', function () {
+      PACK.forEach(function (g) { g.items.forEach(function (it) { state.pack[it.k] = 1; }); });
+      save(); renderPack(); toast('全勾上了，出发吧');
+    });
+    $('#pkClear').addEventListener('click', function () {
+      if (!window.confirm('把打包清单的勾全部清掉？')) return;
+      state.pack = {}; save(); renderPack(); toast('清单清空了');
+    });
+    $('#pkCopy').addEventListener('click', function () {
+      copyText(packText(), '清单已复制，粘到备忘录就行');
+    });
+  }
+}
+
+/* ============ 行李页 · 底部弹层（通用） ============ */
+var pkSheet = null;
+var PK_ICONS = ['📦', '🛂', '📱', '👕', '🧴', '🎒', '📄', '💊', '📷', '💳', '🍜', '🎁'];
+
+function pkSheetEl() {
+  if (pkSheet) return pkSheet;
+  var w = document.createElement('div');
+  w.className = 'pk-sheet';
+  w.id = 'pkSheet';
+  w.innerHTML = '<div class="pk-shade"></div>' +
+    '<div class="pk-box" role="dialog" aria-modal="true">' +
+    '<div class="pk-box-h"><b id="pkSheetT"></b>' +
+    '<button class="pk-box-x" id="pkSheetX" aria-label="关闭">✕</button></div>' +
+    '<div class="pk-box-b" id="pkSheetB"></div>' +
+    '<div class="pk-box-f" id="pkSheetF"></div></div>';
+  document.body.appendChild(w);
+  w.querySelector('.pk-shade').addEventListener('click', pkSheetClose);
+  w.querySelector('#pkSheetX').addEventListener('click', pkSheetClose);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') pkSheetClose(); });
+  pkSheet = w;
+  return w;
+}
+function pkSheetOpen(title, body, foot) {
+  var w = pkSheetEl();
+  w.querySelector('#pkSheetT').textContent = title;
+  w.querySelector('#pkSheetB').innerHTML = body;
+  w.querySelector('#pkSheetF').innerHTML = foot || '';
+  w.classList.add('show');
+  document.body.classList.add('pk-lock');
+  return w;
+}
+function pkSheetClose() {
+  if (!pkSheet || !pkSheet.classList.contains('show')) return;
+  pkSheet.classList.remove('show');
+  document.body.classList.remove('pk-lock');
+  var a = document.activeElement;
+  if (a && pkSheet.contains(a)) a.blur();
+}
+function pkChips(id, vals, cur) {
+  return '<div class="ex-chips" id="' + id + '">' + vals.map(function (v) {
+    var val = typeof v === 'string' ? v : v.v;
+    var lab = typeof v === 'string' ? v : v.l;
+    return '<button class="exchip' + (val === cur ? ' on' : '') + '" data-v="' + esc(val) + '">' + esc(lab) + '</button>';
+  }).join('') + '</div>';
+}
+/* 让一组 .exchip 点哪个亮哪个 */
+function pkChipBind(w, id, inp) {
+  w.querySelectorAll('#' + id + ' .exchip').forEach(function (b) {
+    b.addEventListener('click', function () {
+      inp.value = b.dataset.v;
+      w.querySelectorAll('#' + id + ' .exchip').forEach(function (x) { x.classList.toggle('on', x === b); });
+    });
+  });
+}
+
+/* ---------- 改 / 加 一项 ---------- */
+function pkItemEdit(gi, ii) {
+  var g = PACK[gi];
+  if (!g) return;
+  var isNew = ii < 0;
+  var it = isNew ? { n: '', t: '' } : g.items[ii];
+  if (!it) return;
+
+  var body =
+    '<div class="pk-f"><label>这一项是什么</label>' +
+      '<textarea class="ex-in pk-ta" id="pkItN" maxlength="200" placeholder="要带什么">' + esc(it.n) + '</textarea></div>' +
+    '<div class="pk-f"><label>标记（留空就没有）</label>' +
+      '<input class="ex-in" id="pkItT" maxlength="6" value="' + esc(it.t || '') + '" placeholder="例如 必带">' +
+      pkChips('pkTagQ', ['必带', '重要', '先买', { v: '', l: '不加标记' }], it.t || '') + '</div>' +
+    '<div class="pk-f"><label>放在哪一组</label>' +
+      '<select class="ex-in" id="pkItG">' + PACK.map(function (gg, k) {
+        return '<option value="' + k + '"' + (k === gi ? ' selected' : '') + '>' +
+          esc(gg.icon + ' ' + gg.name) + '</option>';
+      }).join('') + '</select></div>' +
+    '<div class="pk-dl-note">顺序在本组内用下面的「上移 / 下移」调。</div>';
+
+  var foot = (isNew ? '' :
+      '<button class="pk-fbtn" id="pkItUp">上移</button>' +
+      '<button class="pk-fbtn" id="pkItDn">下移</button>' +
+      '<button class="pk-fbtn pk-del" id="pkItDel">删除</button>') +
+    '<button class="pk-fbtn pk-ok" id="pkItOk">' + (isNew ? '加进去' : '保存') + '</button>';
+
+  var w = pkSheetOpen(isNew ? '加一项到「' + g.name + '」' : '改这一项', body, foot);
+  var nEl = w.querySelector('#pkItN'), tEl = w.querySelector('#pkItT'), gEl = w.querySelector('#pkItG');
+  pkChipBind(w, 'pkTagQ', tEl);
+  tEl.addEventListener('input', function () {
+    w.querySelectorAll('#pkTagQ .exchip').forEach(function (x) {
+      x.classList.toggle('on', x.dataset.v === tEl.value.trim());
+    });
+  });
+  function grab() {
+    return { n: pkClean(nEl.value, 200), t: pkClean(tEl.value, 6), g: +gEl.value };
+  }
+  w.querySelector('#pkItOk').addEventListener('click', function () {
+    var d = grab();
+    if (!d.n) { toast('写点内容再保存'); nEl.focus(); return; }
+    if (!PACK[d.g]) d.g = gi;
+    var msg;
+    if (isNew) {
+      PACK[d.g].items.push({ k: pkNewKey(PACK[d.g].id), n: d.n, t: d.t });
+      msg = '加上了';
+    } else {
+      var o = PACK[gi].items[ii];
+      o.n = d.n; o.t = d.t;
+      if (d.g !== gi) { PACK[gi].items.splice(ii, 1); PACK[d.g].items.push(o); msg = '换到「' + PACK[d.g].name + '」了'; }
+      else msg = '改好了';
+    }
+    packSave(); save(); renderPack(); pkSheetClose(); toast(msg);
+  });
+  if (isNew) return;
+
+  w.querySelector('#pkItDel').addEventListener('click', function () {
+    if (!window.confirm('删掉「' + PACK[gi].items[ii].n + '」？')) return;
+    PACK[gi].items.splice(ii, 1);
+    packSave(); save(); renderPack(); pkSheetClose(); toast('删掉了');
+  });
+  var mv = function (d) {
+    var o = PACK[gi].items[ii], f = grab();
+    o.n = f.n || o.n; o.t = f.t;           /* 顺手把改到一半的文案存下 */
+    var j = ii + d;
+    if (j < 0 || j >= PACK[gi].items.length) { toast(d < 0 ? '已经是第一项了' : '已经是最后一项了'); return; }
+    PACK[gi].items[ii] = PACK[gi].items[j];
+    PACK[gi].items[j] = o;
+    packSave(); save(); renderPack();
+    pkItemEdit(gi, j);
+  };
+  w.querySelector('#pkItUp').addEventListener('click', function () { mv(-1); });
+  w.querySelector('#pkItDn').addEventListener('click', function () { mv(1); });
+}
+
+/* ---------- 改 / 加 一组 ---------- */
+function pkGroupEdit(gi) {
+  var g = PACK[gi];
+  if (!g) return;
+  var body =
+    '<div class="pk-f"><label>分组名</label>' +
+      '<input class="ex-in" id="pkGN" maxlength="24" value="' + esc(g.name) + '" placeholder="例如 证件与钱财"></div>' +
+    '<div class="pk-f"><label>图标</label>' +
+      '<input class="ex-in" id="pkGI" maxlength="4" value="' + esc(g.icon) + '">' +
+      pkChips('pkIconQ', PK_ICONS, g.icon) + '</div>' +
+    '<div class="pk-f"><label>一句备注（可留空）</label>' +
+      '<input class="ex-in" id="pkGT" maxlength="80" value="' + esc(g.note) + '" placeholder="为什么带、注意什么"></div>' +
+    '<div class="pk-dl-note">这一组现在有 ' + g.items.length + ' 项。删掉分组会连着里面的项一起删。</div>';
+  var foot = '<button class="pk-fbtn" id="pkGUp">上移</button>' +
+    '<button class="pk-fbtn" id="pkGDn">下移</button>' +
+    '<button class="pk-fbtn pk-del" id="pkGDel">删分组</button>' +
+    '<button class="pk-fbtn pk-ok" id="pkGOk">保存</button>';
+
+  var w = pkSheetOpen('改分组', body, foot);
+  var nEl = w.querySelector('#pkGN'), iEl = w.querySelector('#pkGI'), tEl = w.querySelector('#pkGT');
+  pkChipBind(w, 'pkIconQ', iEl);
+  iEl.addEventListener('input', function () {
+    w.querySelectorAll('#pkIconQ .exchip').forEach(function (x) {
+      x.classList.toggle('on', x.dataset.v === iEl.value.trim());
+    });
+  });
+  function grab() {
+    return {
+      name: pkClean(nEl.value, 24) || '分组',
+      icon: pkClean(iEl.value, 4) || '📦',
+      note: pkClean(tEl.value, 80)
+    };
+  }
+  w.querySelector('#pkGOk').addEventListener('click', function () {
+    var d = grab();
+    g.name = d.name; g.icon = d.icon; g.note = d.note;
+    packSave(); renderPack(); pkSheetClose(); toast('分组改好了');
+  });
+  w.querySelector('#pkGDel').addEventListener('click', function () {
+    var n = g.items.length;
+    if (!window.confirm('删掉「' + g.name + '」这一组' + (n ? '，连同里面 ' + n + ' 项一起？' : '？'))) return;
+    PACK.splice(gi, 1);
+    packSave(); save(); renderPack(); pkSheetClose();
+    toast(PACK.length ? '删掉了' : '清单空了，可以重新排一份');
+  });
+  var mv = function (d) {
+    var f = grab(); g.name = f.name; g.icon = f.icon; g.note = f.note;
+    var j = gi + d;
+    if (j < 0 || j >= PACK.length) { toast(d < 0 ? '已经在最前面了' : '已经在最后面了'); return; }
+    PACK[gi] = PACK[j]; PACK[j] = g;
+    packSave(); renderPack();
+    pkGroupEdit(j);
+  };
+  w.querySelector('#pkGUp').addEventListener('click', function () { mv(-1); });
+  w.querySelector('#pkGDn').addEventListener('click', function () { mv(1); });
+}
+
+/* ---------- 导出 JSON ---------- */
+function pkExportSheet() {
+  var json = packExportJSON();
+  var st = packCount();
+  var body =
+    '<div class="pk-dl-note" style="margin:0 0 11px">' + PACK.length + ' 组 / ' + st.tot + ' 项，连勾选状态一起导出（' +
+    st.got + ' 个勾）。存成文件后发给自己或同伴都行，换设备用「导入 JSON」搬回来。</div>' +
+    '<textarea class="ex-in pk-code" id="pkCode" readonly>' + esc(json) + '</textarea>';
+  var foot = '<button class="pk-fbtn" id="pkDl">存成文件</button>' +
+    '<button class="pk-fbtn" id="pkCopyJson">复制 JSON</button>' +
+    '<button class="pk-fbtn pk-ok" id="pkExClose">知道了</button>';
+  var w = pkSheetOpen('导出清单 · ' + pkFileName(), body, foot);
+  w.querySelector('#pkDl').addEventListener('click', function () {
+    toast(pkDownload(pkFileName(), json) ? '存好了，在手机的「下载」里' : '这台浏览器不让直接存，用「复制 JSON」吧');
+  });
+  w.querySelector('#pkCopyJson').addEventListener('click', function () {
+    copyText(json, 'JSON 已复制，粘到备忘录或聊天窗口就行');
+  });
+  w.querySelector('#pkExClose').addEventListener('click', pkSheetClose);
+}
+
+/* ---------- 导入 JSON ---------- */
+function pkImportSheet() {
+  var st = packCount();
+  var body =
+    '<div class="pk-f"><label>从文件导入</label>' +
+      '<input type="file" id="pkFile" accept=".json,application/json,text/plain,text/*" hidden>' +
+      '<button class="ex-in pk-filebtn" id="pkPick">选一个 .json 文件</button>' +
+      '<div class="pk-dl-note" id="pkPickName" style="margin-top:7px">' +
+      '认袋米导出的 JSON；也认手写的 { "分组名": ["项1", "项2"] }。</div></div>' +
+    '<div class="pk-f"><label>或者把 JSON 粘进来</label>' +
+      '<textarea class="ex-in pk-code" id="pkPaste" placeholder=\'{"groups":[{"name":"证件","items":["护照","身份证"]}]}\'></textarea></div>' +
+    '<div class="pk-dl-note">导入会用文件里的内容替换现在这份清单（现在是 ' + PACK.length + ' 组 / ' +
+    st.tot + ' 项），勾选状态一起带过来。</div>';
+  var foot = '<button class="pk-fbtn pk-del" id="pkImCancel">取消</button>' +
+    '<button class="pk-fbtn pk-ok" id="pkImOk">确认导入</button>';
+  var w = pkSheetOpen('导入清单', body, foot);
+  var paste = w.querySelector('#pkPaste');
+  w.querySelector('#pkPick').addEventListener('click', function () { w.querySelector('#pkFile').click(); });
+  w.querySelector('#pkFile').addEventListener('change', function () {
+    var f = this.files && this.files[0];
+    if (!f) return;
+    var fr = new FileReader();
+    fr.onload = function () {
+      paste.value = String(fr.result || '');
+      w.querySelector('#pkPickName').textContent = '已读入「' + f.name + '」（' + f.size + ' 字节）—— 确认无误后点「确认导入」';
+    };
+    fr.onerror = function () { toast('这个文件读不出来'); };
+    fr.readAsText(f);
+  });
+  w.querySelector('#pkImCancel').addEventListener('click', pkSheetClose);
+  w.querySelector('#pkImOk').addEventListener('click', function () {
+    var txt = paste.value;
+    if (!txt.trim()) { toast('先选个文件或粘一段 JSON'); return; }
+    var gs;
+    try { gs = pkParse(txt); }
+    catch (e) { toast('这段 JSON 认不出来：' + e.message); return; }
+    var clean = pkNorm(gs), tot = 0;
+    clean.forEach(function (x) { tot += x.items.length; });
+    if (!clean.length || !tot) { toast('里面没有可用的条目'); return; }
+    if (!window.confirm('用导入的 ' + clean.length + ' 组 / ' + tot + ' 项替换现在这份清单？')) return;
+    var r = pkApplyClean(clean);
+    renderPack(); pkSheetClose();
+    toast('导入完成 · ' + r.groups + ' 组 / ' + r.items + ' 项' + (r.ck ? '（含 ' + r.ck + ' 个勾）' : ''));
   });
 }
 
@@ -3413,6 +3985,7 @@ function openNav(url, ll) {
 /* ============ Tab ============ */
 function switchTab(t) {
   state.tab = t; save();
+  if (t !== 'pack') pkSheetClose();
   document.body.classList.toggle('on-map', t === 'map');
   ['trip', 'overview', 'map', 'list', 'pouch', 'pack', 'exp'].forEach(function (k) {
     var v = $('#view-' + k);
@@ -3572,7 +4145,7 @@ function welcome() {
 }
 
 function init() {
-  load(); meLoad(); wxLoadCache(); expLoad(); fxLoad();
+  load(); meLoad(); wxLoadCache(); expLoad(); fxLoad(); packLoad();
   stream = $('#stream');
   buildChrome();
   bind();
@@ -3585,12 +4158,24 @@ function init() {
   paintWx();
   if (!wxFresh()) wxFetch(function () { paintWx(); });
   window.__daimi = {
-    state: state, DATA: DATA, PACK: PACK, EXP_CATS: EXP_CATS,
+    state: state, DATA: DATA, PACK_DEF: PACK_DEF, EXP_CATS: EXP_CATS,
     exp: function () { return EXP; }, hotels: cityHotels,
     wx: function () { return WX; }, fx: function () { return FX; },
     me: function () { return mePos; }, paintWx: paintWx,
-    repaint: function () { renderStream(false); paintDaybar(); }
+    repaint: function () { renderStream(false); paintDaybar(); },
+    /* 行李页：给测试和「粘贴导入」留的接口 */
+    pack: function () { return { edit: pkEdit, seq: pkSeq, groups: PACK, ck: state.pack }; },
+    packSetEdit: function (b) { pkEdit = !!b; renderPack(); },
+    packRender: renderPack,
+    packNorm: pkNorm,
+    packParse: pkParse,
+    packApply: pkApplyClean,
+    packExportJSON: packExportJSON,
+    packSave: packSave,
+    packReset: function () { PACK = pkSeed(); packSave(); renderPack(); }
   };
+  /* PACK 会被整体替换（导入 / 恢复默认），所以走 getter，别抓住旧数组 */
+  Object.defineProperty(window.__daimi, 'PACK', { get: function () { return PACK; } });
 }
 
 document.addEventListener('DOMContentLoaded', init);
