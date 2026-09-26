@@ -1887,25 +1887,41 @@ function renderPouch() {
 }
 
 /* ============ 地图页 ============ */
-/* 底图：Esri 系（海外覆盖好、免 key、国内通常可达），OSM 德国镜像兜底。
-   Leaflet 已内嵌进单文件，不再依赖 CDN —— 这是上一版地图"看不见"的根因。 */
+/* 底图（2026-09-25 实测过每个源在纽约/首尔各 zoom 的真实返回，别凭印象改）：
+     HOT       纽约+首尔 z13~z19 全是真图，覆盖最稳 → 放第一位
+     Esri 影像  两地 z19 都是真图（卫星图不受韩国地图数据限制）
+     Esri 街道  纽约 z18 及以下有图、z19 返回 "Map data not yet available"；
+                首尔整城没有数据（韩国限制地图数据出境）
+     OSM-bzh   小众镜像，留作最后备选
+   maxZoom 是地图能放大到几级，nat(maxNativeZoom) 是瓦片真正提供到几级 ——
+   超过 nat 时 Leaflet 会把最大那级的瓦片放大显示，而不是去要一张不存在的图。
+   之前没设 nat，纽约放大到 z19 就撞上 Esri 的空白占位图，这就是"地图数据不可用"的来源。 */
 var TILES = [
-  { id: 'street', name: '街道', desc: '最实用', url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', attr: 'Esri · OSM', max: 19 },
-  { id: 'gray', name: '简约', desc: '手账底', url: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', attr: 'Esri', max: 16 },
-  { id: 'sat', name: '卫星', desc: '看实景', url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', attr: 'Esri', max: 19 },
-  { id: 'topo', name: '地形', desc: '公园绿地', url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', attr: 'Esri', max: 19 },
-  { id: 'osm', name: 'OSM', desc: '备选', url: 'https://tile.openstreetmap.de/{z}/{x}/{y}.png', attr: 'OpenStreetMap', max: 19 }
+  { id: 'hot',     name: '街道', desc: '最稳',    url: 'https://a.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', attr: '© OpenStreetMap 贡献者 · HOT', max: 19, nat: 19 },
+  { id: 'imagery', name: '卫星', desc: '看实景',  url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', attr: 'Esri · Maxar', max: 19, nat: 19 },
+  { id: 'street',  name: '浅色', desc: '标准街景', url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', attr: 'Esri', max: 19, nat: 18 },
+  { id: 'bzh',     name: 'OSM',  desc: '备用',    url: 'https://tile.openstreetmap.bzh/br/{z}/{x}/{y}.png', attr: 'OpenStreetMap', max: 19, nat: 19 }
 ];
 
-/* 探测用的已知瓦片：纽约时代广场 / 首尔市厅 附近 z13 */
-var PROBE = {
-  nyc: { z: 13, x: 2412, y: 3077 },
-  sel: { z: 13, x: 6985, y: 3172 }
-};
+/* 探测用坐标：当前城市市中心 + 一个八竿子打不着的参照点（伦敦）。
+   探测级别取 z18 —— 就是用户"放大以后"最容易撞上占位图的那一档。 */
 var PROBE_SRC = { nyc: [40.758, -73.985], sel: [37.566, 126.978] };
+var PROBE_FAR = [51.5074, -0.1278];
+var PROBE_Z = 18;
+
+function llToTile(lat, lon, z) {
+  var n = Math.pow(2, z), r = lat * Math.PI / 180;
+  return {
+    x: Math.floor((lon + 180) / 360 * n),
+    y: Math.floor((1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * n)
+  };
+}
 
 var mapObj = null, tileLayerObj = null, mapLayer = null;
 var curTile = 0, tileOK = false, tileErrs = 0, tileTried = {};
+/* curTile 是在哪座城市探出来的：换城市（纽约↔首尔）要重新挑源，
+   因为同一个源可能在纽约有图、在首尔整城没数据 */
+var tileCity = '';
 var mapMode = '';                 /* '' 未定 | 'tile' 真地图 | 'vec' 离线手绘 */
 var probing = false, toolsOpen = false, drawerOpen = false;
 /* 签名：用来判断重新进地图页时，到底要不要重画图层 / 重置视野 */
@@ -1953,6 +1969,8 @@ function renderMap() {
   if (mapMode === 'tile' && mapObj) setTimeout(function () { mapObj.invalidateSize(); }, 30);
 
   if (mapMode === 'tile' && mapObj) {
+    /* 换了城市就先重挑底图（纽约↔首尔，可用性差别很大），再照常画图钉 */
+    reprobeForCity();
     /* 只有「换天 / 换城市」才重画并重置视野；只是打卡状态变了就原地刷图钉，
        来回切 tab 时地图不会再被拉回原点。 */
     var ds = mapDoneSig(list);
@@ -2014,7 +2032,7 @@ function renderTools() {
   var ml = $('#mtList'); if (ml) ml.addEventListener('click', toggleDrawer);
   var rt = $('#mtRetry');
   if (rt) rt.addEventListener('click', function () {
-    mapMode = ''; probing = false; tileOK = false; tileErrs = 0; tileTried = {};
+    mapMode = ''; probing = false; tileOK = false; tileErrs = 0; tileTried = {}; tileCity = '';
     renderMap();
   });
   var lay = $('#mtLayer');
@@ -2030,6 +2048,23 @@ function renderTools() {
       curTile = i; toolsOpen = false; tileOK = false; tileErrs = 0;
       applyTile(); renderTools();
       toast('底图换成「' + TILES[i].name + '」');
+      /* 手动选的这张在当前城市可能没数据（Esri 街道在首尔就是整城空白），
+         当场验一下，不行就退回可用的一张，别让用户对着灰底发呆 */
+      var k = cityKey();
+      probeTile(TILES[i], function (ok) {
+        if (ok || curTile !== i || cityKey() !== k) return;
+        toast('「' + TILES[i].name + '」在' + (k === 'sel' ? '首尔' : '纽约') + '没有数据，换回别的');
+        for (var j = 0; j < TILES.length; j++) {
+          if (j !== i) {
+            curTile = j; tileOK = false; tileErrs = 0;
+            applyTile(); renderTools();
+            probeTile(TILES[j], function (ok2) {
+              if (!ok2 && j === curTile) toast('底图都连不上，把地图放大点试试');
+            });
+            return;
+          }
+        }
+      });
     });
   });
 }
@@ -2072,14 +2107,73 @@ function renderDrawer(list) {
 }
 
 /* ============ 底图探测与初始化 ============ */
+/* 这里有个坑值得单独记一笔：Esri 在没有数据的区域会返回 HTTP 200 + 一张写着
+   "Map data not yet available" 的正常 256px 灰图 —— 能解码、onload 照常触发，
+   所以「图片能加载就算通过」这种探测完全抓不住它，地图一片灰底还自以为正常。
+   靠得住的判据只有一条：**错误图在任何位置都是同一张，真地图必然各不相同**。
+   于是每个源取两个相距上万公里的点，拿到同一张图就直接判它无效。 */
+function probeSample(t, lat, lon, z, cb) {
+  var p = llToTile(lat, lon, z);
+  var url = t.url.replace('{z}', z).replace('{y}', p.y).replace('{x}', p.x).replace('{s}', 'a');
+  var done = false, tm = setTimeout(function () { fin(null); }, 6000);
+  function fin(r) { if (!done) { done = true; clearTimeout(tm); cb(r); } }
+
+  function measure(im) {
+    if (im === 'blank') return 'blank';
+    if (!im) return null;
+    var cv = document.createElement('canvas'); cv.width = cv.height = 24;
+    var g = cv.getContext('2d');
+    g.drawImage(im, 0, 0, 24, 24);
+    var d;
+    try { d = g.getImageData(0, 0, 24, 24).data; }
+    catch (e) { return 'ok'; }                /* 读不到像素 → 退回"能解码就算过" */
+    var s = 0, s2 = 0, fp = 7, n = d.length / 4;
+    for (var i = 0; i < d.length; i += 4) {
+      var v = (d[i] + d[i + 1] + d[i + 2]) / 3;
+      s += v; s2 += v * v;
+      fp = (fp * 33 + d[i] + d[i + 1] * 3 + d[i + 2] * 7) % 2147483647;
+    }
+    return { sd: Math.sqrt(Math.max(0, s2 / n - Math.pow(s / n, 2))), fp: fp };
+  }
+
+  fetch(url, { mode: 'cors', cache: 'no-store' })
+    .then(function (r) { if (!r.ok) throw 0; return r.blob(); })
+    .then(function (b) {
+      if (b.size < 900) return 'blank';
+      return new Promise(function (res) {
+        var im = new Image();
+        im.onload = function () { res(im); };
+        im.onerror = function () { res(null); };
+        im.src = URL.createObjectURL(b);
+      });
+    })
+    .then(function (im) { fin(measure(im)); })
+    .catch(function () {
+      /* fetch 被拦（CORS / 断网）→ 只判断能不能解码，网络层的失败交给 tileerror 兜 */
+      var im2 = new Image(), d2 = false;
+      var t2 = setTimeout(function () { if (!d2) { d2 = true; clearTimeout(t2); fin(null); } }, 5000);
+      im2.onload = function () { if (!d2) { d2 = true; clearTimeout(t2); fin(im2.width > 8 ? 'ok' : null); } };
+      im2.onerror = function () { if (!d2) { d2 = true; clearTimeout(t2); fin(null); } };
+      im2.src = url;
+    });
+}
+
 function probeTile(t, cb) {
-  var p = PROBE[cityKey()];
-  var url = t.url.replace('{z}', p.z).replace('{y}', p.y).replace('{x}', p.x).replace('{s}', 'a');
-  var im = new Image(), done = false;
-  var tm = setTimeout(function () { if (!done) { done = true; cb(false); } }, 4500);
-  im.onload = function () { if (!done) { done = true; clearTimeout(tm); cb(im.width > 8); } };
-  im.onerror = function () { if (!done) { done = true; clearTimeout(tm); cb(false); } };
-  im.src = url;
+  var c = PROBE_SRC[cityKey()];
+  var gotA = null, gotB = null, cnt = 0, fired = false;
+  function judge() {
+    if (fired) return;
+    fired = true;
+    if (!gotA) { cb(false); return; }                      /* 下不来 */
+    if (gotA === 'blank' || gotA.sd < 8) { cb(false); return; }  /* 空白图 / 纯色占位图 */
+    if (gotA === 'ok') { cb(true); return; }                /* 拿不到像素，乐观放行 */
+    /* 纽约的样张和伦敦的样张一模一样 → 必是服务端塞回来的错误图 */
+    cb(!(gotB && gotB !== 'ok' && gotB !== 'blank' && gotB.fp === gotA.fp));
+  }
+  function tick() { cnt++; if (cnt === 2) judge(); }
+  /* 两点并发，省掉一个来回 —— 探测拖得越久，用户对着"正在铺地图"就越久 */
+  probeSample(t, c[0], c[1], PROBE_Z, function (a) { gotA = a; tick(); });
+  probeSample(t, PROBE_FAR[0], PROBE_FAR[1], PROBE_Z, function (b) { gotB = b; tick(); });
 }
 
 function probeAll(cb) {
@@ -2092,22 +2186,58 @@ function probeAll(cb) {
   })();
 }
 
+/* 换城市要重新挑源：同一个源可能纽约有图、首尔整城没数据 */
+function reprobeForCity() {
+  var k = cityKey();
+  if (tileCity === k) return;
+  tileCity = k;
+  probing = true; setTip('换个城市，重新铺地图…');
+  var was = curTile;
+  probeAll(function (idx) {
+    probing = false; hideTip();
+    if (idx >= 0) {
+      tileTried = {}; tileTried[idx] = 1;
+      if (idx !== was) {
+        curTile = idx; tileOK = false; tileErrs = 0;
+        if (mapObj) applyTile();
+        toast('底图自动切到「' + TILES[idx].name + '」');
+      }
+    }
+    renderTools();
+  });
+}
+
 function bootMap(list) {
   probing = true;
   setTip('袋米正在铺地图…');
   if (!window.L) { probing = false; mapMode = 'vec'; goVec(list, '地图组件没加载上，先看手绘路线图'); return; }
+  /* 先用首选源把地图铺出来，别让用户干等探测跑完 */
+  curTile = 0; tileTried = {}; tileTried[0] = 1; tileCity = cityKey();
+  try {
+    initMap();
+    mapMode = 'tile'; tileOK = true;
+    hideTip();
+    renderTools(); renderDrawer(list);
+    drawMap(list);
+  } catch (e) {
+    probing = false; mapMode = 'vec'; goVec(list, '地图初始化失败，先看手绘路线图'); return;
+  }
+  /* 铺好之后再验一遍：首选源在这座城市要是没数据，静默换一张好的。
+     四个源的样张一张都拿不到，则基本就是断网 —— 直接上离线手绘路线图 */
   probeAll(function (idx) {
     probing = false;
-    if (idx < 0) { mapMode = 'vec'; goVec(list, '底图连不上网，袋米先给你画了张手绘路线图'); return; }
-    curTile = idx; tileTried = {}; tileTried[idx] = 1;
-    try {
-      initMap();
-      mapMode = 'tile'; tileOK = true;
-      hideTip();
-      renderTools(); renderDrawer(list);
-      drawMap(list);
-    } catch (e) {
-      mapMode = 'vec'; goVec(list, '地图初始化失败，先看手绘路线图');
+    hideTip();
+    if (idx < 0) {
+      if (tileLayerObj && mapObj) { mapObj.removeLayer(tileLayerObj); tileLayerObj = null; }
+      mapMode = 'vec';
+      goVec(list, '底图连不上网，袋米先给你画了张手绘路线图');
+      return;
+    }
+    tileTried = {}; tileTried[idx] = 1;
+    if (idx !== curTile) {
+      curTile = idx; tileOK = false; tileErrs = 0;
+      applyTile(); renderTools();
+      toast('底图自动切到「' + TILES[idx].name + '」');
     }
   });
 }
@@ -2137,7 +2267,11 @@ function applyTile() {
   if (tileLayerObj) { mapObj.removeLayer(tileLayerObj); tileLayerObj = null; }
   var t = TILES[curTile];
   tileLayerObj = L.tileLayer(t.url, {
-    maxZoom: t.max, attribution: '底图 &copy; ' + t.attr,
+    maxZoom: t.max,
+    /* 关键：瓦片只提供到 nat 级。超过时让 Leaflet 放大最大那级的图（略糊），
+       而不是去请求一张会返回空白占位图的瓦片 */
+    maxNativeZoom: t.nat || t.max,
+    attribution: '底图 &copy; ' + t.attr,
     errorTileUrl: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
   });
   tileOK = false; tileErrs = 0;
