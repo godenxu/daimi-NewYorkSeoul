@@ -1623,7 +1623,19 @@ function locateMe(manual) {
     if (manual) {
       var fi = focusInfo(), dd = fi ? meDistTo(fi.s) : null;
       toast(dd == null ? '找到你了' : ('找到你了 · 离当前站约 ' + fmtKm(dd)));
-      if (mapObj && mePos) mapObj.setView([mePos.lat, mePos.lng], Math.max(mapObj.getZoom(), 15), { animate: true });
+      if (mapObj && mePos) {
+        /* 镜头拉回自己这边。今晚的住处要是就在附近（≤3km），把它一起框进来 ——
+           「我在哪」和「今晚住哪」本来就是一个问题的两半，只给自己一个点还得再手动找酒店。
+           人在上海时酒店远在上万公里外，这道距离闸会挡住，仍只居中到自己。 */
+        var hm = cityHotels()[0];
+        var hd = hm ? hdist(mePos.lat, mePos.lng, hm.geo.lat, hm.geo.lng) : null;
+        if (hm && hd != null && hd <= 3000) {
+          mapObj.fitBounds([[mePos.lat, mePos.lng], [hm.geo.lat, hm.geo.lng]],
+            { padding: [72, 72], maxZoom: 17, animate: true });
+        } else {
+          mapObj.setView([mePos.lat, mePos.lng], Math.max(mapObj.getZoom(), 15), { animate: true });
+        }
+      }
     }
   }
   function err(e) { meBusy = false; if (manual) toast(geoErrMsg(e)); }
